@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="so">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nidaamka Maqaayadda - Restaurant Management System</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Top Navigation Bar -->
+  <header class="top-nav">
+    <div class="nav-brand">
+      <div class="logo-icon">
+        <i class="fa-solid fa-utensils"></i>
+      </div>
+      <div>
+        <h1>Barwaaqo <span>Restaurant</span></h1>
+        <p class="tagline">Nidaamka Maamulka & Dalabaadka (POS)</p>
+      </div>
+    </div>
+
+    <!-- Quick Stats Bar -->
+    <div class="quick-stats">
+      <div class="stat-pill">
+        <i class="fa-solid fa-receipt"></i>
+        <span>Dalabyada Maanta: <strong id="stat-total-orders">0</strong></span>
+      </div>
+      <div class="stat-pill highlight">
+        <i class="fa-solid fa-wallet"></i>
+        <span>Dakhliga: <strong id="stat-total-revenue">$0.00</strong></span>
+      </div>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <nav class="nav-tabs">
+      <button class="nav-tab active" data-tab="pos-view">
+        <i class="fa-solid fa-cash-register"></i> Dalabka (POS)
+      </button>
+      <button class="nav-tab" data-tab="orders-view">
+        <i class="fa-solid fa-clock-rotate-left"></i> Dalabaadka <span class="badge" id="orders-badge">0</span>
+      </button>
+      <button class="nav-tab" data-tab="menu-admin-view">
+        <i class="fa-solid fa-bowl-food"></i> Liiska Cuntada
+      </button>
+    </nav>
+  </header>
+
+  <!-- Main Container -->
+  <main class="main-wrapper">
+
+    <!-- VIEW 1: POS & ORDERING -->
+    <section id="pos-view" class="view-section active">
+      <div class="pos-layout">
+        
+        <!-- Left: Menu & Categories -->
+        <div class="menu-column">
+          <!-- Search & Filter Controls -->
+          <div class="menu-header-bar">
+            <div class="search-box">
+              <i class="fa-solid fa-magnifying-glass"></i>
+              <input type="text" id="food-search" placeholder="Raadi cunto ama cabitaan...">
+              <button id="clear-search" class="clear-btn" title="Nadiifi">&times;</button>
+            </div>
+
+            <!-- Categories -->
+            <div class="category-filters" id="category-filters">
+              <button class="cat-btn active" data-category="all">
+                <i class="fa-solid fa-border-all"></i> Dhammaan
+              </button>
+              <button class="cat-btn" data-category="Quraac">
+                <i class="fa-solid fa-mug-saucer"></i> Quraac
+              </button>
+              <button class="cat-btn" data-category="Qado & Casho">
+                <i class="fa-solid fa-drumstick-bite"></i> Qado & Casho
+              </button>
+              <button class="cat-btn" data-category="Cunto Fudud">
+                <i class="fa-solid fa-cookie-bite"></i> Cunto Fudud
+              </button>
+              <button class="cat-btn" data-category="Cabitaanno">
+                <i class="fa-solid fa-wine-glass"></i> Cabitaanno
+              </button>
+            </div>
+          </div>
+
+          <!-- Food Grid -->
+          <div class="food-grid" id="food-grid">
+            <!-- Dynamically populated via JS -->
+          </div>
+        </div>
+
+        <!-- Right: Current Cart / Order Summary -->
+        <div class="cart-column">
+          <div class="cart-card">
+            
+            <div class="cart-header">
+              <div class="cart-title">
+                <i class="fa-solid fa-cart-shopping"></i>
+                <h2>Dalabka Hadda</h2>
+              </div>
+              <button id="btn-clear-cart" class="text-btn danger-text" title="Faaruqi dalabka">
+                <i class="fa-solid fa-trash-can"></i> Faaruqi
+              </button>
+            </div>
+
+            <!-- Customer & Order Meta -->
+            <div class="order-meta-form">
+              <div class="form-row">
+                <div class="form-group flex-1">
+                  <label for="customer-name"><i class="fa-regular fa-user"></i> Magaca Macmiilka</label>
+                  <input type="text" id="customer-name" placeholder="Tusaale: Axmed Cali" value="Macmiil Guud">
+                </div>
+                <div class="form-group" style="width: 110px;">
+                  <label for="table-number"><i class="fa-solid fa-chair"></i> Miiska #</label>
+                  <select id="table-number">
+                    <option value="Miiska 01">Miiska 1</option>
+                    <option value="Miiska 02">Miiska 2</option>
+                    <option value="Miiska 03">Miiska 3</option>
+                    <option value="Miiska 04">Miiska 4</option>
+                    <option value="Miiska 05">Miiska 5</option>
+                    <option value="Takeaway">Qaadasho (Takeaway)</option>
+                    <option value="Delivery">Gaarsiin (Delivery)</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <!-- Cart Items List -->
+            <div class="cart-items-container" id="cart-items">
+              <div class="empty-cart-message">
+                <i class="fa-solid fa-plate-wheat"></i>
+                <p>Wali waxba kuma jiraan dalabkaaga.</p>
+                <span>Guji cuntada dhinaca bidix si aad ugu darto.</span>
+              </div>
+            </div>
+
+            <!-- Order Financial Breakdown -->
+            <div class="cart-summary">
+              <div class="summary-line">
+                <span>Wadarta Hoose:</span>
+                <span id="cart-subtotal">$0.00</span>
+              </div>
+              <div class="summary-line">
+                <span>Cashuur / Adeeg (0%):</span>
+                <span id="cart-tax">$0.00</span>
+              </div>
+              <div class="summary-line total">
+                <span>Wadarta Guud:</span>
+                <span id="cart-total" class="highlight-total">$0.00</span>
+              </div>
+
+              <!-- Payment Method Selection -->
+              <div class="payment-method-selector">
+                <label><i class="fa-solid fa-credit-card"></i> Habka Lacag Bixinta:</label>
+                <div class="payment-options">
+                  <label class="pay-option">
+                    <input type="radio" name="payment" value="Kaash" checked>
+                    <span><i class="fa-solid fa-money-bill-wave"></i> Kaash</span>
+                  </label>
+                  <label class="pay-option">
+                    <input type="radio" name="payment" value="EVC Plus / Zaad">
+                    <span><i class="fa-solid fa-mobile-screen"></i> EVC / Zaad</span>
+                  </label>
+                  <label class="pay-option">
+                    <input type="radio" name="payment" value="Kaadh Bank">
+                    <span><i class="fa-regular fa-credit-card"></i> Kaadh</span>
+                  </label>
+                </div>
+              </div>
+
+              <!-- Checkout Button -->
+              <button id="btn-checkout" class="btn-checkout" disabled>
+                <i class="fa-solid fa-check-circle"></i> Xaqiiji & Daabac Rasiidhka
+              </button>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- VIEW 2: ORDER HISTORY & MANAGEMENT -->
+    <section id="orders-view" class="view-section">
+      <div class="section-container">
+        
+        <div class="section-header">
+          <div>
+            <h2><i class="fa-solid fa-clock-rotate-left"></i> Dalabaadka Maanta & Maamulkooda</h2>
+            <p>Halkan kala soco dhammaan dalabyada la soo diray iyo heerka ay marayaan.</p>
+          </div>
+          
+          <div class="orders-filter-bar">
+            <button class="order-filter-btn active" data-filter="all">Dhammaan (<span id="count-all">0</span>)</button>
+            <button class="order-filter-btn" data-filter="Diyaarinta">Diyaarinta (<span id="count-pending">0</span>)</button>
+            <button class="order-filter-btn" data-filter="Diyaar">Diyaar (<span id="count-ready">0</span>)</button>
+            <button class="order-filter-btn" data-filter="Dhammaystiran">Dhammaystiran (<span id="count-done">0</span>)</button>
+          </div>
+        </div>
+
+        <div class="orders-table-wrapper">
+          <table class="orders-table">
+            <thead>
+              <tr>
+                <th>Lambarka</th>
+                <th>Waqtiga</th>
+                <th>Macmiilka</th>
+                <th>Miiska</th>
+                <th>Waxyaabaha</th>
+                <th>Lacagta</th>
+                <th>Habka</th>
+                <th>Heerka (Status)</th>
+                <th>Ficillo</th>
+              </tr>
+            </thead>
+            <tbody id="orders-table-body">
+              <!-- Dynamically rendered -->
+            </tbody>
+          </table>
+          <div id="no-orders-msg" class="empty-state hidden">
+            <i class="fa-solid fa-clipboard-list"></i>
+            <p>Wax dalabyo ah lama helin.</p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- VIEW 3: MENU & FOOD MANAGEMENT -->
+    <section id="menu-admin-view" class="view-section">
+      <div class="section-container">
+        
+        <div class="section-header">
+          <div>
+            <h2><i class="fa-solid fa-bowl-rice"></i> Maamulka Liiska Cuntada</h2>
+            <p>Ku dar cunto cusub, wax ka baddal ama tirtir cuntooyinka jira.</p>
+          </div>
+          <button id="btn-open-add-modal" class="btn-primary">
+            <i class="fa-solid fa-plus"></i> Ku Dar Cunto Cusub
+          </button>
+        </div>
+
+        <!-- Menu Table List -->
+        <div class="menu-management-grid" id="menu-admin-list">
+          <!-- Dynamically filled with food cards -->
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- MODAL: ADD NEW FOOD ITEM -->
+  <div class="modal-backdrop" id="add-food-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3><i class="fa-solid fa-plus-circle"></i> Ku Dar Cunto Cusub</h3>
+        <button class="modal-close" id="btn-close-food-modal">&times;</button>
+      </div>
+      <form id="add-food-form">
+        <div class="form-group">
+          <label for="food-name">Magaca Cuntada *</label>
+          <input type="text" id="food-name" required placeholder="Tusaale: Bariis & Hilib Geel">
+        </div>
+
+        <div class="form-row">
+          <div class="form-group flex-1">
+            <label for="food-category">Qaybta (Category) *</label>
+            <select id="food-category" required>
+              <option value="Quraac">Quraac</option>
+              <option value="Qado & Casho" selected>Qado & Casho</option>
+              <option value="Cunto Fudud">Cunto Fudud</option>
+              <option value="Cabitaanno">Cabitaanno</option>
+            </select>
+          </div>
+          <div class="form-group flex-1">
+            <label for="food-price">Qiimaha ($ USD) *</label>
+            <input type="number" id="food-price" step="0.25" min="0.25" required placeholder="5.50">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="food-image">Link-ga Sawirka (Image URL - Doorasho ah)</label>
+          <input type="url" id="food-image" placeholder="https://images.unsplash.com/...">
+          <small class="form-tip">Haddii aad ka tagto, waxaa loo adeegsanayaa sawir qurux badan oo default ah.</small>
+        </div>
+
+        <div class="form-group">
+          <label for="food-desc">Faahfaahin kooban</label>
+          <input type="text" id="food-desc" placeholder="Tusaale: Waxaa la socda maraq, suugo iyo basbaas.">
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn-secondary" id="btn-cancel-food">Ka Noqo</button>
+          <button type="submit" class="btn-primary"><i class="fa-solid fa-save"></i> Keydi Cuntada</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: RECEIPT / BILL MODAL (PRINTABLE) -->
+  <div class="modal-backdrop" id="receipt-modal">
+    <div class="modal-card receipt-card">
+      <div class="modal-header no-print">
+        <h3><i class="fa-solid fa-receipt"></i> Rasiidhka Dalabka</h3>
+        <button class="modal-close" id="btn-close-receipt">&times;</button>
+      </div>
+
+      <!-- Printable Receipt Content -->
+      <div class="receipt-printable" id="printable-receipt-area">
+        <div class="receipt-brand">
+          <h2>🍽️ BARWAAQO RESTAURANT</h2>
+          <p>Wadada Wadnaha, Muqdisho / Hargeysa</p>
+          <p>Tel: +252 61 500 0000 / +252 63 400 0000</p>
+          <div class="receipt-divider">================================</div>
+        </div>
+
+        <div class="receipt-details">
+          <div class="detail-row">
+            <span>Dalabka #:</span>
+            <strong id="rcpt-id">#ORD-0000</strong>
+          </div>
+          <div class="detail-row">
+            <span>Taariikh & Waqti:</span>
+            <span id="rcpt-date">--/--/---- --:--</span>
+          </div>
+          <div class="detail-row">
+            <span>Macmiilka:</span>
+            <span id="rcpt-customer">Macmiil</span>
+          </div>
+          <div class="detail-row">
+            <span>Miiska / Nooca:</span>
+            <span id="rcpt-table">Miiska 1</span>
+          </div>
+        </div>
+
+        <div class="receipt-divider">--------------------------------</div>
+
+        <table class="receipt-table">
+          <thead>
+            <tr>
+              <th style="text-align: left;">Cunto</th>
+              <th style="text-align: center;">Xab.</th>
+              <th style="text-align: right;">Qiimo</th>
+              <th style="text-align: right;">Wadarta</th>
+            </tr>
+          </thead>
+          <tbody id="rcpt-items-body">
+            <!-- Items populated here -->
+          </tbody>
+        </table>
+
+        <div class="receipt-divider">--------------------------------</div>
+
+        <div class="receipt-totals">
+          <div class="total-row">
+            <span>Wadarta Guud:</span>
+            <strong id="rcpt-total">$0.00</strong>
+          </div>
+          <div class="detail-row">
+            <span>Lacag Bixinta:</span>
+            <span id="rcpt-payment">Kaash</span>
+          </div>
+        </div>
+
+        <div class="receipt-divider">================================</div>
+
+        <div class="receipt-footer">
+          <p>*** MAHADSANID, SOO DHAWAOW MAR KALE! ***</p>
+          <p class="tagline">Barwaaqo Restaurant System v1.0</p>
+        </div>
+      </div>
+
+      <div class="modal-actions no-print">
+        <button class="btn-secondary" id="btn-close-receipt-footer">Xir</button>
+        <button class="btn-primary" id="btn-print-receipt">
+          <i class="fa-solid fa-print"></i> Daabac Rasiidhka (Print)
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="toast">
+    <i class="fa-solid fa-circle-check"></i>
+    <span id="toast-message">Fariin</span>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
